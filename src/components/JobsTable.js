@@ -81,10 +81,10 @@ function JobsTable() {
         <tr>
           <th>#</th>
           <th>Title</th>
-          <th>Company name</th>
-          <th>Salary Min</th>
-          <th>Internal</th>
-          <th>Years of Experience Required</th>
+          <th>Company</th>
+          <th>Salary <br /> (Min)</th>
+          <th>Internal <br /> Apply?</th>
+          <th>Exp <br /> (Years)</th>
           <th>Remote</th>
         </tr>
       </thead>

@@ -1,5 +1,23 @@
 .App {
-  text-align: center;
+  display: grid;
+  grid-template-rows: min-content auto;
+  padding: 10px;
+  gap: 5px;
+}
+
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 5px;
+}
+
+.action-buttons {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 5px;
+}
+
+.action-button {
 }
 
 .App-logo {
