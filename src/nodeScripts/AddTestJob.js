@@ -3,7 +3,7 @@ import jobs_db from '../utils/jobs_db';
 
 function AddTestJob() {
 
-    const randomInt = Math.floor(Math.random() * 100);
+    const randomInt = Math.floor(Math.random() * 1000);
 
     var testJob = [
         testJob = {
