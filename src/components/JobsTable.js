@@ -63,7 +63,7 @@ function JobsTable() {
 
       return (
         <tr key={index}>
-          <td>{index + 1}</td>
+          <th>{index + 1}</th>
           <td>{title || 'Missing'}</td>
           <td>{companyName || 'Missing'}</td>
           <td>{salaryEqMin ? `$${salaryEqMin}` : 'Missing'}</td>
@@ -76,9 +76,9 @@ function JobsTable() {
   };
 
   return (
-    <Table striped bordered hover>
-      <thead>
-        <tr>
+    <table>
+      <thead className='table-hover'>
+        <tr className="table-header-row">
           <th>#</th>
           <th>Title</th>
           <th>Company</th>
@@ -88,8 +88,10 @@ function JobsTable() {
           <th>Remote</th>
         </tr>
       </thead>
-      <tbody>{renderTableData()}</tbody>
-    </Table>
+      {/* <div className="table-body-container"> */}
+        <tbody>{renderTableData()}</tbody>
+      {/* </div> */}
+    </table>
   );
 }
 

@@ -1,11 +1,11 @@
-import './App.css';
 import JobsTable from './components/JobsTable';
 import AddTestJobButton from './components/AddTestJobButton';
 import ClearJobsButton from './components/ClearJobsButton';
+import './App.scss';
 
 function App() {
   return (
-    <div className="App">
+    <div className="App bg-light">
         <div className="header">
           <div className="left-spacer"></div>
           <div className="action-buttons"> 
@@ -14,7 +14,11 @@ function App() {
           </div>
           <div className="right-spacer"></div>
         </div>
-      <JobsTable />
+        <div className="main-div">
+          <div className="table-div">
+            <JobsTable />
+          </div>
+        </div>
     </div>
   );
 }
