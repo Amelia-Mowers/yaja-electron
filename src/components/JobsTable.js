@@ -44,7 +44,7 @@ function JobsTable() {
     if (jobs.length === 0) {
         return (
           <tr>
-            <td>
+            <td align="center" colspan="7">
               No jobs data available.
             </td>
           </tr>
