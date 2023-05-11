@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import Table from 'react-bootstrap/Table';
 import jobs_db from '../utils/jobs_db';
+
+const columnDefs = [
+  { header: '#', format: (_, index) => index + 1 },
+  { header: 'Title', format: job => job.title || 'Missing' },
+  { header: 'Company', format: job => job.companyName || 'Missing' },
+  { header: 'Salary (Min)', format: job => job.salaryEqMin ? `$${job.salaryEqMin}` : 'Missing' },
+  { header: 'Internal Apply?', format: job => job.applyAt === 'Internal' ? 'Yes' : 'No' },
+  { header: 'Exp (Years)', format: job => job.yearsOfExpRequired || 'Missing' },
+  { header: 'Remote', format: job => job.Remote ? 'Yes' : 'No' },
+];
 
 function JobsTable() {
   const [jobs, setJobs] = useState([]);
@@ -38,57 +47,37 @@ function JobsTable() {
   }, []);
 
   // Render the table using the jobs state
-  // ...
 
   const renderTableData = () => {
     if (jobs.length === 0) {
         return (
           <tr>
-            <td align="center" colspan="7">
+            <td align="center" colSpan={columnDefs.length}>
               No jobs data available.
             </td>
           </tr>
         );
       }
 
-    return jobs.map((job, index) => {
-      const {
-        title,
-        companyName,
-        salaryEqMin,
-        applyAt,
-        yearsOfExpRequired,
-        Remote
-      } = job;
-
-      return (
-        <tr key={index}>
-          <th>{index + 1}</th>
-          <td>{title || 'Missing'}</td>
-          <td>{companyName || 'Missing'}</td>
-          <td>{salaryEqMin ? `$${salaryEqMin}` : 'Missing'}</td>
-          <td>{applyAt === 'Internal' ? 'Yes' : 'No'}</td>
-          <td>{yearsOfExpRequired || 'Missing'}</td>
-          <td>{Remote ? 'Yes' : 'No'}</td>
-        </tr>
-      );
-    });
+    return jobs.map((job, index) => (
+      <tr key={index}>
+        {columnDefs.map(col => (
+          <td key={col.header}>{col.format(job, index)}</td>
+        ))}
+      </tr>
+    ));
   };
 
   return (
     <table>
       <thead>
         <tr>
-          <th>#</th>
-          <th>Title</th>
-          <th>Company</th>
-          <th>Salary <br /> (Min)</th>
-          <th>Internal <br /> Apply?</th>
-          <th>Exp <br /> (Years)</th>
-          <th>Remote</th>
+          {columnDefs.map(col => (
+            <th key={col.header}>{col.header}</th>
+          ))}
         </tr>
       </thead>
-        <tbody>{renderTableData()}</tbody>
+      <tbody>{renderTableData()}</tbody>
     </table>
   );
 }
