@@ -44,7 +44,7 @@ function JobsTable() {
     if (jobs.length === 0) {
         return (
           <tr>
-            <td colSpan="7" className="text-center">
+            <td>
               No jobs data available.
             </td>
           </tr>
@@ -77,8 +77,8 @@ function JobsTable() {
 
   return (
     <table>
-      <thead className='table-hover'>
-        <tr className="table-header-row">
+      <thead>
+        <tr>
           <th>#</th>
           <th>Title</th>
           <th>Company</th>
@@ -88,9 +88,7 @@ function JobsTable() {
           <th>Remote</th>
         </tr>
       </thead>
-      {/* <div className="table-body-container"> */}
         <tbody>{renderTableData()}</tbody>
-      {/* </div> */}
     </table>
   );
 }

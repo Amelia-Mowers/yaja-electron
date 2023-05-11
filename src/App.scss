@@ -33,7 +33,7 @@
   // justify-items: center;
 }
 
-tr.table-header-row > th {
+thead > tr > th {
   background: $light;
   position: sticky;
   top: 0;
@@ -43,12 +43,12 @@ tr.table-header-row > th {
 
 $border-width: 1px;
 
-tr.table-header-row > th::after {
+thead > tr > th::after {
   content: "";
   position: absolute;
   top: (-1 * $border-width); /* compensate for the border width */
-  left: (-1 * $border-width); /* compensate for the border width */
-  width: calc(100% + 1 * $border-width); /* compensate for the border width */
+  left: (0px); /* compensate for the border width */
+  width: calc(100%); /* compensate for the border width */
   height: calc(100% + 1 * $border-width); /* compensate for the border width */
   border: inherit; /* inherits the border from the th element */
   border-width: $border-width;
