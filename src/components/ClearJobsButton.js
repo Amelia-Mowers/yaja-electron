@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import ClearJobs from '../nodeScripts/ClearJobs.js';
+import ClearJobs from '../functions/ClearJobs.js';
 
 const ClearJobsButton = () => {
 
