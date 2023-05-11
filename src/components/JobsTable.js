@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import jobs_db from '../utils/jobs_db';
 
 const columnDefs = [
-  { header: '#', format: (_, index) => index + 1 },
-  { header: 'Title', format: job => job.title || 'Missing' },
-  { header: 'Company', format: job => job.companyName || 'Missing' },
-  { header: 'Salary (Min)', format: job => job.salaryEqMin ? `$${job.salaryEqMin}` : 'Missing' },
-  { header: 'Internal Apply?', format: job => job.applyAt === 'Internal' ? 'Yes' : 'No' },
-  { header: 'Exp (Years)', format: job => job.yearsOfExpRequired || 'Missing' },
-  { header: 'Remote', format: job => job.Remote ? 'Yes' : 'No' },
+  { header: <>#</>, format: (_, index) => index + 1 },
+  { header: <>Title</>, format: job => job.title || 'Missing' },
+  { header: <>Company</>, format: job => job.companyName || 'Missing' },
+  { header: <>Salary <br/> (Min)</>, format: job => job.salaryEqMin ? `$${job.salaryEqMin}` : 'Missing' },
+  { header: <>Internal <br/> Apply?</>, format: job => job.applyAt === 'Internal' ? 'Yes' : 'No' },
+  { header: <>Exp <br/> (Years)</>, format: job => job.yearsOfExpRequired || 'Missing' },
+  { header: <>Remote</>, format: job => job.Remote ? 'Yes' : 'No' },
 ];
 
 function JobsTable() {
@@ -18,7 +18,7 @@ function JobsTable() {
     const fetchData = async () => {
       try {
         const allDocs = await jobs_db.allDocs({ include_docs: true });
-        console.log('All Docs:', allDocs);
+        // console.log('All Docs:', allDocs);
         setJobs(allDocs.rows.map(row => row.doc));
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -62,7 +62,7 @@ function JobsTable() {
     return jobs.map((job, index) => (
       <tr key={index}>
         {columnDefs.map(col => (
-          <td key={col.header}>{col.format(job, index)}</td>
+          <td key={col._id}>{col.format(job, index)}</td>
         ))}
       </tr>
     ));
@@ -72,8 +72,8 @@ function JobsTable() {
     <table>
       <thead>
         <tr>
-          {columnDefs.map(col => (
-            <th key={col.header}>{col.header}</th>
+          {columnDefs.map((col, index) => (
+            <th key={index}>{col.header}</th>
           ))}
         </tr>
       </thead>

@@ -82,6 +82,9 @@ td {
   position: relative;
   border-width: 0;
   z-index: 1;
+  max-width: 300px;
+  overflow: hidden  ; /* or overflow: scroll; if you want to always show scrollbars */
+  word-wrap: break-word;
 }
 
 td::after {
