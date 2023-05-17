@@ -3,20 +3,7 @@ const path = require('path');
 const isDev = require('electron-is-dev');
 const jsonfile = require('jsonfile');
 
-ipcMain.handle('open-file-dialog', async () => {
-    const { filePaths } = await dialog.showOpenDialog({ properties: ['openFile'], filters: [{ name: 'json', extensions: ['json'] }] });
-    return filePaths;
-});
-
-ipcMain.handle('read-file', async (event, filePath) => {
-  try {
-    const jobDataArray = await jsonfile.readFile(filePath);
-    return { success: true, data: jobDataArray };
-  } catch (err) {
-    console.error('Error reading file:', err);
-    return { success: false, error: err };
-  }
-});
+require('./src/electronUtils/HandleIpcFunctions.js');
 
 function createWindow() {
   const win = new BrowserWindow({

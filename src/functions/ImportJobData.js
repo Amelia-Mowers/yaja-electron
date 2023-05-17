@@ -1,7 +1,10 @@
 import jobs_db from '../utils/jobs_db';
+import IpcHandles from '../utils/IpcHandles';
 
 const ImportJobData = async () => {
-  const filePaths = await window.electron.invoke('open-file-dialog');
+  const ipcHandles = await IpcHandles();
+
+  const filePaths = await ipcHandles.OpenFileDialog();
   
   if (filePaths.length === 0) {
     alert('No file selected!');
@@ -9,7 +12,7 @@ const ImportJobData = async () => {
   }
 
   const file = filePaths[0];
-  const result = await window.electron.invoke('read-file', file);
+  const result = await ipcHandles.ReadFile(file);
 
   if (!result.success) {
     console.error('Error reading file:', result.error);
