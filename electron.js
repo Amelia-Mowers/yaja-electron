@@ -1,7 +1,6 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
-const jsonfile = require('jsonfile');
 
 require('./src/electronUtils/HandleIpcFunctions.js');
 
