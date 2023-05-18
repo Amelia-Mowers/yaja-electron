@@ -1,16 +1,16 @@
-let ipcHandles = null;
-
 const createIpcHandle = (name) => (...args) => window.electron.invoke(name, ...args);
 
-const getIpcHandles = async () => {
-  if (ipcHandles === null) {
-    const functionNames = await window.electron.invoke('IpcFunctionNames');
-    ipcHandles = functionNames.reduce((handles, name) => {
+function getIpcHandles() {
+  return window.electron.invoke('IpcFunctionNames').then(functionNames => {
+    var ipcHandles = functionNames.reduce((handles, name) => {
       handles[name] = createIpcHandle(name);
       return handles;
     }, {});
-  }
-  return ipcHandles;
-};
+    return ipcHandles;
+  });
+}
 
-export default getIpcHandles;
+let IpcHandles = getIpcHandles();
+
+export default IpcHandles;
+

@@ -2,6 +2,8 @@ import JobsTable from './components/JobsTable';
 import AddTestJobButton from './components/AddTestJobButton';
 import ClearJobsButton from './components/ClearJobsButton';
 import ImportJobButton from './components/ImportJobButton';
+import GetListingsButton from './components/GetListingsButton';
+
 import './App.scss';
 
 function App() {
@@ -11,7 +13,8 @@ function App() {
           <div className="left-spacer"></div>
           <div className="action-buttons"> 
             <AddTestJobButton className="action-button"/>
-            <ImportJobButton />
+            <GetListingsButton className="action-button"/>
+            <ImportJobButton className="action-button"/>
             <ClearJobsButton className="action-button"/>
           </div>
           <div className="right-spacer"></div>

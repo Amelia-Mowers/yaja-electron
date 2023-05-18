@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-const GetListings = nw.require('../nodeScripts/GetListings.js');
+import AddInitJobListings from '../functions/AddInitJobListings';
 
 const GetListingsButton = () => {
 
   return (
     <div>
-      <Button onClick={GetListings} variant="primary">
+      <Button onClick={AddInitJobListings} variant="primary">
         Get Listings
       </Button>
     </div>
