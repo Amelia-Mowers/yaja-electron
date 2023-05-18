@@ -12,10 +12,10 @@ function App() {
         <div className="header">
           <div className="left-spacer"></div>
           <div className="action-buttons"> 
-            <AddTestJobButton className="action-button"/>
-            <GetListingsButton className="action-button"/>
-            <ImportJobButton className="action-button"/>
-            <ClearJobsButton className="action-button"/>
+            <AddTestJobButton />
+            <GetListingsButton />
+            <ImportJobButton />
+            <ClearJobsButton />
           </div>
           <div className="right-spacer"></div>
         </div>

@@ -5,11 +5,11 @@ import ImportJobData from '../functions/ImportJobData.js';
 
 const ImportJobButton = () => {
   return (
-    <div>
+    <>
       <Button onClick={ImportJobData} variant="primary">
         Import Job Data
       </Button>
-    </div>
+    </>
   );
 };
 

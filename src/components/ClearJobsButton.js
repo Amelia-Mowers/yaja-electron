@@ -6,11 +6,11 @@ import jobsDbAPI from '../utils/jobsDbAPI';
 const ClearJobsButton = () => {
 
   return (
-    <div>
+    <>
       <Button onClick={jobsDbAPI.clearDb} variant="danger">
         Clear Jobs
       </Button>
-    </div>
+    </>
   );
 };
 

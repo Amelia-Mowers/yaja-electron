@@ -6,11 +6,11 @@ import AddTestJob from '../functions/AddTestJob.js';
 const AddTestJobButton = () => {
 
   return (
-    <div>
+    <>
       <Button onClick={AddTestJob} variant="primary">
         Add Test Job
       </Button>
-    </div>
+    </>
   );
 };
 
