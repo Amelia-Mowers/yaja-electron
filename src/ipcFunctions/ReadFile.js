@@ -1,6 +1,6 @@
 const jsonfile = require('jsonfile');
 
-async function ReadFile(event, filePath) {
+async function ReadFile(sendUpdate, filePath) {
   try {
     const jobDataArray = await jsonfile.readFile(filePath);
     return { success: true, data: jobDataArray };

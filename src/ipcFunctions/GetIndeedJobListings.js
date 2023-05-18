@@ -3,7 +3,7 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-async function GetIndeedJobListings(event, config) {
+async function GetIndeedJobListings(sendUpdate, config) {
     try {
         const searchQuery = config.searchQueries.join();
         const location = config.location;

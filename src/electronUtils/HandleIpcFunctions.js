@@ -9,14 +9,19 @@ let functions = [];
 
 fs.readdirSync(scriptsPath).forEach(file => {
     if (path.extname(file) === '.js') {
-        const fileNameWithoutExt = path.basename(file, '.js');
-        const func = require(path.join(scriptsPath, file));
-        if (typeof func === 'function') {
-            ipcMain.handle(fileNameWithoutExt, func);
-            functions.push(fileNameWithoutExt);
-        }
+      const fileNameWithoutExt = path.basename(file, '.js');
+      const func = require(path.join(scriptsPath, file));
+      if (typeof func === 'function') {
+        ipcMain.handle(fileNameWithoutExt, (event, ...args) => {
+          const sendUpdate = (update) => {
+            event.sender.send(fileNameWithoutExt + '-update', update);
+          };
+          return func(sendUpdate, ...args);
+        });
+        functions.push(fileNameWithoutExt);
+      }
     }
-});
+  });
 
 function ipcFunctionNames() {
     return functions;
