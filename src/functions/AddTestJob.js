@@ -1,11 +1,11 @@
-import jobs_db from '../utils/jobs_db';
+import jobsDbAPI from '../utils/jobsDbAPI';
 
 function AddTestJob() {
 
   const randomInt = Math.floor(Math.random() * 1000);
-
-  var testJob = [
-      {
+  
+  jobsDbAPI.addJob(
+    {
       _id: 'test_job_' + randomInt,
       id: 'test_job_' + randomInt,
       title: 'Test Job_' + randomInt,
@@ -14,10 +14,8 @@ function AddTestJob() {
       applyAt: 'Internal',
       yearsOfExpRequired: 2,
       Remote: false,
-      }
-  ];
-  
-  jobs_db.bulkDocs(testJob);
+    }
+  );
 }
   
 export default AddTestJob;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import jobs_db from '../utils/jobs_db';
+import jobsDbAPI from '../utils/jobsDbAPI';
 
 const columnDefs = [
   { header: <>#</>, format: (_, index) => index + 1 },
@@ -17,7 +17,7 @@ function JobsTable() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const allDocs = await jobs_db.allDocs({ include_docs: true });
+        const allDocs = await jobsDbAPI.getAllJobs();
         // console.log('All Docs:', allDocs);
         setJobs(allDocs.rows.map(row => row.doc));
       } catch (error) {
@@ -27,23 +27,45 @@ function JobsTable() {
 
     fetchData();
 
-    // Listen for changes in the database
-    const changes = jobs_db.changes({
-      since: 'now',
-      live: true,
-      include_docs: true
-    }).on('change', (change) => {
-      // Update the state when the database changes
-      fetchData();
-    }).on('error', (err) => {
-      console.error('Error listening for changes:', err);
-    });
+    let changes;
+    
+    const updateChanges = () => {
+      // Dispose of the existing changes listener
+      if (changes) {
+        changes.cancel();
+      }
+  
+      // Create a new changes listener
+      changes = jobsDbAPI.getDb().changes({
+        since: 'now',
+        live: true,
+        include_docs: true
+      }).on('change', (change) => {
+        // Update the state when the database changes
+        fetchData();
+      }).on('error', (err) => {
+        console.error('Error listening for changes:', err);
+      });
 
-    // Clean up the changes listener when the component is unmounted
-    return () => {
-      changes.cancel();
+      fetchData();
     };
 
+    // Initialize the changes listener
+    updateChanges();
+
+    // Listen for the dbCleared event and update the changes listener when it happens
+    const onDbCleared = (event) => {
+      updateChanges();
+    };
+    window.addEventListener('dbCleared', onDbCleared);
+
+    // Clean up the event listener when the component is unmounted
+    return () => {
+      if (changes) {
+        changes.cancel();
+      }
+      window.removeEventListener('dbCleared', onDbCleared);
+    };
   }, []);
 
   // Render the table using the jobs state

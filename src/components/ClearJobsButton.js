@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import ClearJobs from '../functions/ClearJobs.js';
+import jobsDbAPI from '../utils/jobsDbAPI';
 
 const ClearJobsButton = () => {
 
   return (
     <div>
-      <Button onClick={ClearJobs} variant="danger">
+      <Button onClick={jobsDbAPI.clearDb} variant="danger">
         Clear Jobs
       </Button>
     </div>

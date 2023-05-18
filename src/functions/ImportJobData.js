@@ -1,4 +1,4 @@
-import jobs_db from '../utils/jobs_db';
+import jobsDbAPI from '../utils/jobsDbAPI';
 import IpcHandles from '../utils/IpcHandles';
 
 const ImportJobData = async () => {
@@ -23,7 +23,7 @@ const ImportJobData = async () => {
     j._rev = null;
   });
 
-  jobs_db.bulkDocs(result.data);
+  jobsDbAPI.bulkAdd(result.data);
 };
 
 export default ImportJobData;
