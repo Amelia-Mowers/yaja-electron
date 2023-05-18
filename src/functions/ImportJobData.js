@@ -1,8 +1,8 @@
 import jobsDbAPI from '../utils/jobsDbAPI';
 import IpcHandles from '../utils/IpcHandles';
 
-const ImportJobData = async () => {
-  const ipcHandles = await IpcHandles();
+async function ImportJobData(){
+  const ipcHandles = await IpcHandles;
 
   const filePaths = await ipcHandles.OpenFileDialog();
   
