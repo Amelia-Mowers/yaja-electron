@@ -81,13 +81,14 @@ function JobsTable() {
         );
       }
 
-    return jobs.map((job, index) => (
-      <tr key={index}>
-        {columnDefs.map(col => (
-          <td key={col._id}>{col.format(job, index)}</td>
+    return jobs.map((job, rowIndex) => (
+      <tr key={rowIndex}>
+        {columnDefs.map((col, colIndex) => (
+          <td key={`${rowIndex}-${colIndex}`}>{col.format(job, rowIndex)}</td>
         ))}
       </tr>
     ));
+      
   };
 
   return (
