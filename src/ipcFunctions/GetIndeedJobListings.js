@@ -14,18 +14,33 @@ async function GetIndeedJobListings(sendUpdate, config) {
 
         puppeteer.use(StealthPlugin());
 
+        sendUpdate('Starting Browser...');
+
         const browser = await puppeteer.launch({ headless });
         const page = await browser.newPage();
+
+        sendUpdate('Browser Initialized!');
 
         const allJobData = new Map();
         const pagesData = [];
 
+        sendUpdate(`Starting Scrape Page ${1}/${numPages}...`);
+
         pagesData.push(await scrapeIndeedJobPage(searchQuery, location, 1, page));
 
+        sendUpdate(`Completed Scrape Page ${1}/${numPages}!`);
+
         for (let i = 2; i <= numPages; i++) {
+            sendUpdate(`Waiting ${waitTimeMs}Ms...`);
             await delay(waitTimeMs);
+            sendUpdate(`Starting Scrape Page ${i}/${numPages}...`);
             pagesData.push(await scrapeIndeedJobPage(searchQuery, location, i, page));
+            sendUpdate(`Completed Scrape Page ${i}/${numPages}!`);
         }
+        
+        if (closeBrowser) { await browser.close(); }
+
+        sendUpdate(`Starting Process Data...`);
 
         for (const job of pagesData.flat()) {
             if (!allJobData.has(job._id)) {
@@ -33,13 +48,13 @@ async function GetIndeedJobListings(sendUpdate, config) {
             }
         }
 
-        if (closeBrowser) { await browser.close(); }
-
         const jobsArray = Array.from(allJobData.values())
+
+        sendUpdate(`Processed Data!`);
 
         return { success: true, data: jobsArray };
     } catch (err) {
-        console.error('Error scraping indeed:', err);
+        console.error('Error Scraping Indeed:', err);
         return { success: false, error: err };
     }
 }

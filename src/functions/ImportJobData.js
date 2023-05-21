@@ -4,7 +4,7 @@ import IpcHandles from '../utils/IpcHandles';
 async function ImportJobData(){
   const ipcHandles = await IpcHandles;
 
-  const filePaths = await ipcHandles.OpenFileDialog();
+  const filePaths = await ipcHandles.OpenFileDialog.invoke();
   
   if (filePaths.length === 0) {
     alert('No file selected!');
@@ -12,7 +12,7 @@ async function ImportJobData(){
   }
 
   const file = filePaths[0];
-  const result = await ipcHandles.ReadFile(file);
+  const result = await ipcHandles.ReadFile.invoke(file);
 
   if (!result.success) {
     console.error('Error reading file:', result.error);
