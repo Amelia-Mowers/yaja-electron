@@ -1,5 +1,9 @@
 Progress popup
 
+Cancel script?
+
+Electron Custom warnings, unpaired listeners and handlers
+
 Export Database
 
 Integrate node scripts 
@@ -7,6 +11,8 @@ Integrate node scripts
 manage settings through gui
 
 cover letter generation using gpt
+
+Refactor table to use event buss
 
 implement login
 
