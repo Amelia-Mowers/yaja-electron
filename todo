@@ -4,8 +4,6 @@ Export Database
 
 Integrate node scripts 
 
-Create Manager GUI
-
 manage settings through gui
 
 cover letter generation using gpt
@@ -33,4 +31,8 @@ Multiple profiles/databases
 
 Figure out vpn for web scraping
 
+Filter sheet view
 Database indexing and paging
+
+Check if internet is available
+Check if indeed is available
