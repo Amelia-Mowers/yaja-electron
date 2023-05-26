@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Modal, Button, Form, FormControl, FormGroup, FormLabel, FormCheck, Dropdown } from 'react-bootstrap';
 import EventBus from '../utils/eventBus';
 import ConfigManager from '../utils/ConfigManager';
 import DynamicStringArrayInput from './DynamicStringArrayInput';
 
 function SettingsModal() {
-  const dialogRef = useRef(null);
   const configSchema = ConfigManager.getConfigurationSchema();
   const [config, setConfigState] = useState(ConfigManager.getConfig());
+  const [show, setShow] = useState(false);
 
-  const openModal = useCallback(() => dialogRef.current.showModal(), []);
+  const openModal = useCallback(() => setShow(true), []);
 
   useEffect(() => {
     const unsubscribe = EventBus.openSettingsModal.subscribe(openModal);
@@ -17,32 +18,29 @@ function SettingsModal() {
     };
   }, [openModal]);  
 
-  const updateConfig = () => {
+  const updateConfig = (e) => {
+    e.preventDefault();
     ConfigManager.setConfig(config);
-    dialogRef.current.close();
+    setShow(false);
   };
 
-  const resetConfigState = () => {
+  const resetConfigState = (e) => {
+    e.preventDefault();
     ConfigManager.resetConfig();
     setConfigState(ConfigManager.getConfig());
-    dialogRef.current.close();
+    setShow(false);
   };
 
-  const handleClose = () => {
-    dialogRef.current.close();
-  };
+  const handleClose = () => setShow(false);
 
   const handleChange = (name, value) => {
     setConfigState((prevConfig) => ({ ...prevConfig, [name]: value }));
   };
-
+  
   const renderInputContent = (key, value, inputType, childElement) => (
-    <div key={key}>
-      <label>
-        {configSchema[key].label}:
-        {childElement}
-      </label>
-    </div>
+    <FormGroup key={key} className="mb-3">
+      {childElement}
+    </FormGroup>
   );
   
   const renderInput = (key, value) => {
@@ -60,10 +58,11 @@ function SettingsModal() {
   
     if (type === 'boolean') {
       return renderInputContent(key, value, 'boolean',
-        <input
+        <FormCheck
           type="checkbox"
           name={key}
           checked={value}
+          label={configSchema[key].label}
           onChange={(event) => handleChange(key, event.target.checked)}
         />
       );
@@ -71,40 +70,57 @@ function SettingsModal() {
   
     if (options) {
       return renderInputContent(key, value, 'select',
-        <select
-          name={key}
-          value={value}
-          onChange={(event) => handleChange(key, event.target.value)}
-        >
-          {options.map(option => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+        <>
+          <FormLabel>
+            {configSchema[key].label}:
+          </FormLabel>
+          <FormControl
+            as="select"
+            name={key}
+            value={value}
+            onChange={(event) => handleChange(key, event.target.value)}
+          >
+            {options.map(option => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </FormControl>
+        </>
       );
     }
   
     return renderInputContent(key, value, type,
-      <input
-        type={type === 'number' ? 'number' : 'text'}
-        name={key}
-        value={value}
-        onChange={(event) => handleChange(key, event.target.value)}
-      />
+      <>
+        <FormLabel>
+          {configSchema[key].label}:
+        </FormLabel>
+        <FormControl
+          type={type === 'number' ? 'number' : 'text'}
+          name={key}
+          value={value}
+          onChange={(event) => handleChange(key, event.target.value)}
+        />
+      </>
     );
   };
   
-
   return (
-    <dialog ref={dialogRef}>
-      <form method="dialog">
-        {Object.entries(config).map(([key, value]) => renderInput(key, value))}
-        <button onClick={resetConfigState}>Reset to Default</button>
-        <button type="submit" onClick={updateConfig}>Save Changes</button>
-        <button onClick={handleClose}>Exit</button>
-      </form>
-    </dialog>
+    <Modal show={show} onHide={handleClose} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>Settings</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form onSubmit={updateConfig}>
+          {Object.entries(config).map(([key, value]) => renderInput(key, value))}
+          <Button variant="secondary" onClick={resetConfigState}>Reset to Default</Button>{' '}
+          <Button variant="primary" type="submit">Save Changes</Button>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>Close</Button>
+      </Modal.Footer>
+    </Modal>
   );
 }
 

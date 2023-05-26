@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { Button, InputGroup, FormControl } from 'react-bootstrap';
 
 /**
  * DynamicStringArrayInput is a form component for collecting a dynamic array of string inputs.
@@ -38,17 +39,17 @@ const DynamicStringArrayInput = ({ name, onChange, value }) => {
     return (
         <>
             {inputs.map((input, index) => (
-                <div key={index}>
-                    <input
+                <InputGroup className="mb-3" key={index}>
+                    <FormControl
                         type="text"
                         value={input}
                         onChange={event => handleInputChange(index, event)}
                         ref={index === inputs.length - 1 ? newInputRef : null}
                     />
-                    <button type="button" onClick={() => handleInputDelete(index)}>Delete</button>
-                </div>
+                    <Button variant="outline-secondary" onClick={() => handleInputDelete(index)}>Delete</Button>
+                </InputGroup>
             ))}
-            <button type="button" onClick={handleAddInput}>Add</button>
+            <Button variant="secondary" onClick={handleAddInput}>Add</Button>
         </>
     );
 };
