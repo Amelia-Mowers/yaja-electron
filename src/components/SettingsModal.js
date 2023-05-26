@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Modal, Button, Form, FormControl, FormGroup, FormLabel, FormCheck, Dropdown } from 'react-bootstrap';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Modal, Button, Form, FormControl, FormGroup, FormLabel, FormCheck } from 'react-bootstrap';
 import EventBus from '../utils/eventBus';
 import ConfigManager from '../utils/ConfigManager';
 import DynamicStringArrayInput from './DynamicStringArrayInput';
@@ -33,8 +33,8 @@ function SettingsModal() {
 
   const handleClose = () => setShow(false);
 
-  const handleChange = (name, value) => {
-    setConfigState((prevConfig) => ({ ...prevConfig, [name]: value }));
+  const handleChange = (name, value, type) => {
+    setConfigState((prevConfig) => ({ ...prevConfig, [name]: type === 'number' ? parseInt(value) : value }));
   };
   
   const renderInputContent = (key, value, inputType, childElement) => (
@@ -63,7 +63,7 @@ function SettingsModal() {
           name={key}
           checked={value}
           label={configSchema[key].label}
-          onChange={(event) => handleChange(key, event.target.checked)}
+          onChange={(event) => handleChange(key, event.target.checked, type)}
         />
       );
     }
@@ -78,7 +78,7 @@ function SettingsModal() {
             as="select"
             name={key}
             value={value}
-            onChange={(event) => handleChange(key, event.target.value)}
+            onChange={(event) => handleChange(key, event.target.value, type)}
           >
             {options.map(option => (
               <option key={option} value={option}>
@@ -99,7 +99,7 @@ function SettingsModal() {
           type={type === 'number' ? 'number' : 'text'}
           name={key}
           value={value}
-          onChange={(event) => handleChange(key, event.target.value)}
+          onChange={(event) => handleChange(key, event.target.value, type)}
         />
       </>
     );
