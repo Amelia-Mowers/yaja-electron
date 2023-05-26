@@ -1,4 +1,4 @@
-import config from '../utils/config';
+import ConfigManager from '../utils/ConfigManager';
 import IpcHandles from '../utils/IpcHandles';
 import jobsDbAPI from '../utils/jobsDbAPI';
 
@@ -6,10 +6,15 @@ async function AddInitJobListings() {
   const ipcHandles = await IpcHandles;
 
   const result = await ipcHandles.GetIndeedJobListings.invokeWithCallback(
-    update => {
+    async update => {
       console.log('GetIndeedJobListings:', update);
+  
+      if (update.includes('Starting Scrape Page')) {
+        const cancelled = true; // Your function to check if the task should be cancelled
+        return { cancelled };
+      }
     },
-    config
+    ConfigManager.getConfig()
   );
 
   if (!result.success) {

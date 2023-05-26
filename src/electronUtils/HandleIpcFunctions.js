@@ -12,11 +12,21 @@ fs.readdirSync(scriptsPath).forEach(file => {
       const fileNameWithoutExt = path.basename(file, '.js');
       const func = require(path.join(scriptsPath, file));
       if (typeof func === 'function') {
-        ipcMain.handle(fileNameWithoutExt, (event, ...args) => {
-          const sendUpdate = (update) => {
-            event.sender.send(fileNameWithoutExt + '-update', update);
+        ipcMain.handle(fileNameWithoutExt, async (event, ...args) => {
+          const tools = {
+            sendUpdate: (update) => {
+              event.sender.send(fileNameWithoutExt + '-update', update);
+            },
+            sendUpdateWithResponse: async (update) => {
+              event.sender.send(fileNameWithoutExt + '-update', update);
+              return new Promise((resolve) => {
+                ipcMain.once(fileNameWithoutExt + '-update-response', (event, response) => {
+                  resolve(response);
+                });
+              });
+            }
           };
-          return func(sendUpdate, ...args);
+          return func(tools, ...args);
         });
         functions.push(fileNameWithoutExt);
       }

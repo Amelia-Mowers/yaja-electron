@@ -3,7 +3,7 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-async function GetIndeedJobListings(sendUpdate, config) {
+async function GetIndeedJobListings(tools, config) {
     try {
         const searchQuery = config.searchQueries.join();
         const location = config.location;
@@ -14,33 +14,39 @@ async function GetIndeedJobListings(sendUpdate, config) {
 
         puppeteer.use(StealthPlugin());
 
-        sendUpdate('Starting Browser...');
+        tools.sendUpdate('Starting Browser...');
 
         const browser = await puppeteer.launch({ headless });
         const page = await browser.newPage();
 
-        sendUpdate('Browser Initialized!');
+        tools.sendUpdate('Browser Initialized!');
 
         const allJobData = new Map();
         const pagesData = [];
 
-        sendUpdate(`Starting Scrape Page ${1}/${numPages}...`);
+        tools.sendUpdate(`Starting Scrape Page ${1}/${numPages}...`);
 
         pagesData.push(await scrapeIndeedJobPage(searchQuery, location, 1, page));
 
-        sendUpdate(`Completed Scrape Page ${1}/${numPages}!`);
+        tools.sendUpdate(`Completed Scrape Page ${1}/${numPages}!`);
 
         for (let i = 2; i <= numPages; i++) {
-            sendUpdate(`Waiting ${waitTimeMs}Ms...`);
+            const response = await tools.sendUpdateWithResponse(`Starting Scrape Page ${i}/${numPages}...`);
+            if (response.cancelled) {
+              tools.sendUpdate('Task Cancelled');
+              return { success: false, error: 'Task Cancelled' };
+            }
+
+            tools.sendUpdate(`Waiting ${waitTimeMs}Ms...`);
             await delay(waitTimeMs);
-            sendUpdate(`Starting Scrape Page ${i}/${numPages}...`);
+            
             pagesData.push(await scrapeIndeedJobPage(searchQuery, location, i, page));
-            sendUpdate(`Completed Scrape Page ${i}/${numPages}!`);
+            tools.sendUpdate(`Completed Scrape Page ${i}/${numPages}!`);
         }
         
         if (closeBrowser) { await browser.close(); }
 
-        sendUpdate(`Starting Process Data...`);
+        tools.sendUpdate(`Starting Process Data...`);
 
         for (const job of pagesData.flat()) {
             if (!allJobData.has(job._id)) {
@@ -50,7 +56,7 @@ async function GetIndeedJobListings(sendUpdate, config) {
 
         const jobsArray = Array.from(allJobData.values())
 
-        sendUpdate(`Processed Data!`);
+        tools.sendUpdate(`Processed Data!`);
 
         return { success: true, data: jobsArray };
     } catch (err) {
