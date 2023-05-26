@@ -4,9 +4,17 @@ Cancel script?
 
 Electron Custom warnings, unpaired listeners and handlers
 
+prompt to complete config
+
+config meta-types
+
 Export Database
 
 Integrate node scripts 
+
+round down salaries
+
+Style config settings menu
 
 manage settings through gui
 
@@ -42,3 +50,9 @@ Database indexing and paging
 
 Check if internet is available
 Check if indeed is available
+
+Generic form?
+
+Generic datasource?
+
+Add testing
