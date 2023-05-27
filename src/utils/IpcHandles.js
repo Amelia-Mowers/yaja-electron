@@ -1,13 +1,13 @@
 function createIpcHandle(name) {
   const invoke = (...args) => window.electron.invoke(name, ...args);
   const on = (callback) => window.electron.on(name + '-update', callback);
-  const off = (callback) => window.electron.removeListener(name + '-update', callback);
+  const off = () => window.electron.removeAllListeners(name + '-update');
   
-  const invokeWithCallback = (callback, ...args) => {
+  const invokeWithCallback = async (callback, ...args) => {
     on(callback);
-    const promise = invoke(...args);
-    promise.finally(() => off(callback));
-    return promise;
+    const result = await invoke(...args);
+    await off();
+    return result;
   };
 
   return { invoke, on, off, invokeWithCallback };

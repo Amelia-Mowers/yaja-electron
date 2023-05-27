@@ -3,50 +3,52 @@ const StealthPlugin = require('puppeteer-extra-plugin-stealth');
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+puppeteer.use(StealthPlugin());
+
 async function GetIndeedJobListings(tools, config) {
     try {
-        const searchQuery = config.searchQueries.join();
-        const location = config.location;
-        const numPages = config.numPages;
-        const waitTimeMs = config.waitTimeMs;
-        const headless = config.headless;
-        const closeBrowser = config.closeBrowser;
+        const { searchQueries, location, numPages, waitTimeMs, headless, closeBrowser } = config;
+        const searchQuery = searchQueries.join();
 
-        puppeteer.use(StealthPlugin());
+        const halfSecondChunks = Math.ceil(waitTimeMs / 500);
+        const pageChunk = 95 / numPages;
+        const pageChunkSection = pageChunk / halfSecondChunks
 
-        tools.sendUpdate('Starting Browser...');
+        tools.sendUpdate({ message: `Starting Browser`, progress: pageChunk * (1 / 3) , final: false });
 
         const browser = await puppeteer.launch({ headless });
         const page = await browser.newPage();
 
-        tools.sendUpdate('Browser Initialized!');
+        tools.sendUpdate({ message: `Browser Initialized`, progress: pageChunk * (2 / 3), final: false });
 
         const allJobData = new Map();
         const pagesData = [];
 
-        tools.sendUpdate(`Starting Scrape Page ${1}/${numPages}...`);
+        for (let i = 1; i <= numPages; i++) {
+            if (i != 1) {
 
-        pagesData.push(await scrapeIndeedJobPage(searchQuery, location, 1, page));
-
-        tools.sendUpdate(`Completed Scrape Page ${1}/${numPages}!`);
-
-        for (let i = 2; i <= numPages; i++) {
-            const response = await tools.sendUpdateWithResponse(`Starting Scrape Page ${i}/${numPages}...`);
-            if (response.cancelled) {
-              tools.sendUpdate('Task Cancelled');
-              return { success: false, error: 'Task Cancelled' };
+                for (let j = 0; j < halfSecondChunks; j++) {
+                    await delay(500);
+                    const progress = ((i - 1) * pageChunk) + (j * pageChunkSection);
+                    tools.sendUpdate({
+                        progress: progress,
+                        final: false
+                    });
+                }
             }
 
-            tools.sendUpdate(`Waiting ${waitTimeMs}Ms...`);
-            await delay(waitTimeMs);
-            
+            tools.sendUpdate({
+                message: `Scraping page ${i} out of ${numPages}...`,
+                progress:  i * pageChunk,
+                final: false
+            });
+
             pagesData.push(await scrapeIndeedJobPage(searchQuery, location, i, page));
-            tools.sendUpdate(`Completed Scrape Page ${i}/${numPages}!`);
         }
         
         if (closeBrowser) { await browser.close(); }
 
-        tools.sendUpdate(`Starting Process Data...`);
+        tools.sendUpdate({ message: 'Job listings scraped successfully', progress: 100, final: true });
 
         for (const job of pagesData.flat()) {
             if (!allJobData.has(job._id)) {
@@ -55,8 +57,6 @@ async function GetIndeedJobListings(tools, config) {
         }
 
         const jobsArray = Array.from(allJobData.values())
-
-        tools.sendUpdate(`Processed Data!`);
 
         return { success: true, data: jobsArray };
     } catch (err) {
