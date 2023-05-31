@@ -6,6 +6,7 @@ import GetListingsButton from './components/GetListingsButton';
 import SettingsMenuButton from './components/SettingsMenuButton';
 import SettingsModal from './components/SettingsModal';
 import ProgressModal from './components/ProgressModal';
+import JobDetails from './components/JobDetails';
 
 import './App.scss';
 
@@ -14,22 +15,21 @@ function App() {
     <div className="App bg-light">
         <SettingsModal />
         <ProgressModal />
-        <div className="header">
-          <div className="left-spacer"></div>
-          <div className="action-buttons"> 
-            <SettingsMenuButton />  
-            <AddTestJobButton />
-            <GetListingsButton />
-            <ImportJobButton />
-            <ClearJobsButton />
-          </div>
-          <div className="right-spacer"></div>
-        </div>
-        <div className="main-div">
+        <header className="header">  
+          <SettingsMenuButton />
+          <AddTestJobButton />
+          <GetListingsButton />
+          <ImportJobButton />
+          <ClearJobsButton />
+        </header>
+        <main className="main-div">
           <div className="table-div">
             <JobsTable />
           </div>
-        </div>
+          <div className="detail-div">
+            <JobDetails />
+          </div>
+        </main>
     </div>
   );
 }

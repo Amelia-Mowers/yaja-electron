@@ -2,35 +2,45 @@
 
 .App {
   display: grid;
+  grid-template-areas:
+    "header"
+    "main";
   grid-template-rows: min-content auto;
+  gap: 5px;
   padding: 10px;
   height: 100vh;
-  gap: 5px;
+  overflow: auto;
 }
 
 .header {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  gap: 5px;
-}
-
-.action-buttons {
-  display: grid;
+  width: min-content;
   grid-auto-flow: column;
   gap: 5px;
 }
 
-.table-div {
-  overflow: auto;
-  max-height: auto;
-  max-width: min-content;
+.header .btn {
+  width: 150px;
 }
 
 .main-div {
-  overflow: auto;
-  max-height: auto;
+  grid-area: main;
   display: grid;
-  // justify-items: center;
+  grid-template-areas: "table-div detail-div";
+  grid-template-columns: 1fr min-content; /* Adjust to your need */
+  gap: 1rem;
+  overflow: auto;
+}
+
+.table-div {
+  grid-area: table-div;
+  width: max(min-content);
+  overflow: auto;
+}
+
+.detail-div {
+  grid-area: detail-div;
+  overflow: auto;
 }
 
 thead > tr > th {
@@ -82,8 +92,8 @@ td {
   position: relative;
   border-width: 0;
   z-index: 1;
-  max-width: 300px;
-  overflow: hidden  ; /* or overflow: scroll; if you want to always show scrollbars */
+  max-width: 200px;
+  overflow: hidden; 
   word-wrap: break-word;
 }
 

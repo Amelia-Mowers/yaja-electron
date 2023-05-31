@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import jobsDbAPI from '../utils/jobsDbAPI';
+import eventBus from '../utils/eventBus';
 
 const columnDefs = [
   { header: <>#</>, format: (_, index) => index + 1 },
@@ -68,21 +69,23 @@ function JobsTable() {
     };
   }, []);
 
-  // Render the table using the jobs state
+  const onJobRowClick = (job) => {
+    eventBus.jobSelected.publish(job._id);
+  };
 
   const renderTableData = () => {
     if (jobs.length === 0) {
-        return (
-          <tr>
-            <td align="center" colSpan={columnDefs.length}>
-              No jobs data available.
-            </td>
-          </tr>
-        );
-      }
+      return (
+        <tr>
+          <td align="center" colSpan={columnDefs.length}>
+            No jobs data available.
+          </td>
+        </tr>
+      );
+    }
 
     return jobs.map((job, rowIndex) => (
-      <tr key={rowIndex}>
+      <tr key={rowIndex} onClick={() => onJobRowClick(job)}>
         {columnDefs.map((col, colIndex) => (
           <td key={`${rowIndex}-${colIndex}`}>{col.format(job, rowIndex)}</td>
         ))}
