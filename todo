@@ -1,31 +1,32 @@
-Cancel script from progress popup?
-
-Electron Custom warnings, unpaired listeners and handlers
-
-prompt to complete config
-
-job listing details and raw JSON
-
-Export Database
+Filter sheet view
+Database indexing and paging
 
 Integrate node scripts 
 
-round down salaries
-
 cover letter generation using gpt
-
-Refactor table to use event buss
 
 implement login
 
 flow automation and learning
 form assist
 
+cover letter upload
+
+Cancel script from progress popup?
+
+Electron Custom warnings, unpaired listeners and handlers
+
+prompt to complete config
+
+Export Database
+
+round down salaries
+
+Refactor table to use event bus
+
 check if applied based on login, 
 track applications for offsite
 Check if application still open for existing leads by checking page?
-
-cover letter upload
 
 separate email address for indeed
 
@@ -38,9 +39,6 @@ Style and test generation
 Multiple profiles/databases
 
 Figure out vpn for web scraping
-
-Filter sheet view
-Database indexing and paging
 
 green highlight new cells
 
