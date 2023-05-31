@@ -20,8 +20,6 @@ prompt to complete config
 
 Export Database
 
-round down salaries
-
 Refactor table to use event bus
 
 check if applied based on login, 

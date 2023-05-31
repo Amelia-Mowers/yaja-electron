@@ -6,7 +6,7 @@ const columnDefs = [
   { header: <>#</>, format: (_, index) => index + 1 },
   { header: <>Title</>, format: job => job.title || 'Missing' },
   { header: <>Company</>, format: job => job.companyName || 'Missing' },
-  { header: <>Salary <br/> (Min)</>, format: job => job.salaryEqMin ? `$${job.salaryEqMin}` : 'Missing' },
+  { header: <>Salary <br/> (Min)</>, format: job => job.salaryEqMin ? `$${Math.floor(job.salaryEqMin)}` : 'Missing' },
   { header: <>Internal <br/> Apply?</>, format: job => job.applyAt === 'Internal' ? 'Yes' : 'No' },
   { header: <>Exp <br/> (Years)</>, format: job => job.yearsOfExpRequired || 'Missing' },
   { header: <>Remote</>, format: job => job.Remote ? 'Yes' : 'No' },
