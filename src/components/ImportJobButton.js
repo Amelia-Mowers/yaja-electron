@@ -6,7 +6,7 @@ import ImportJobData from '../functions/ImportJobData.js';
 const ImportJobButton = () => {
   return (
     <>
-      <Button onClick={ImportJobData} variant="primary">
+      <Button onClick={ImportJobData} variant="outline-primary">
         Import Job Data
       </Button>
     </>

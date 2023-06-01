@@ -7,7 +7,7 @@ const AddTestJobButton = () => {
 
   return (
     <>
-      <Button onClick={AddTestJob} variant="primary">
+      <Button onClick={AddTestJob} variant="outline-primary">
         Add Test Job
       </Button>
     </>

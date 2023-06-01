@@ -8,7 +8,7 @@ function SettingsMenuButton() {
     }
 
     return (
-        <Button onClick={openSettings}>Settings</Button>
+        <Button onClick={openSettings} variant="outline-primary">Settings</Button>
     );
 }
 

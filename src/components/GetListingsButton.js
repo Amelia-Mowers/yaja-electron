@@ -7,7 +7,7 @@ const GetListingsButton = () => {
 
   return (
     <>
-      <Button onClick={AddInitJobListings} variant="primary">
+      <Button onClick={AddInitJobListings} variant="outline-primary">
         Get Listings
       </Button>
     </>

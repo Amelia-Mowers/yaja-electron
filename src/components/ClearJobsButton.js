@@ -7,7 +7,7 @@ const ClearJobsButton = () => {
 
   return (
     <>
-      <Button onClick={jobsDbAPI.clearDb} variant="danger">
+      <Button onClick={jobsDbAPI.clearDb} variant="outline-danger">
         Clear Jobs
       </Button>
     </>
