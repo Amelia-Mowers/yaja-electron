@@ -94,7 +94,7 @@ td {
   z-index: 1;
   max-width: 200px;
   overflow: hidden; 
-  word-wrap: break-word;
+  text-overflow: ellipsis;
 }
 
 td::after {
