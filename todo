@@ -16,7 +16,7 @@ Cancel script from progress popup?
 
 Electron Custom warnings, unpaired listeners and handlers
 
-prompt to complete config
+prompt to complete config, use multiple schemas?
 
 Export Database
 
@@ -52,3 +52,5 @@ Generic datasource?
 Add testing
 
 Make config use standard json schema?
+
+More job sites
