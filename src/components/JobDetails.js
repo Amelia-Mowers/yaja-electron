@@ -10,17 +10,24 @@ const JobDetails = () => {
     const [selectedTab, setSelectedTab] = useState('details');
 
     useEffect(() => {
-        const unsubscribe = eventBus.jobSelected.subscribe(async (_id) => {
+        const jobSelectedUnsubscribe = eventBus.jobSelected.subscribe(async (_id) => {
             const jobData = await jobsDbAPI.getJob(_id);
             setJob(jobData);
             setShowDetails(true);
         });
 
-        // Cleanup function to unsubscribe on unmount
+        const dbChangeUnsubscribe = eventBus.dbChange.subscribe(async () => {
+            if (!job || !(await jobsDbAPI.hasJob(job._id))) {
+                setShowDetails(false)
+            } 
+        });
+
+        // Cleanup function to jobSelectedUnsubscribe on unmount
         return () => {
-            unsubscribe();
+            jobSelectedUnsubscribe();
+            dbChangeUnsubscribe();
         };
-    }, []);
+    }, [job]);
 
     if (!showDetails || !job) {
         return null;
