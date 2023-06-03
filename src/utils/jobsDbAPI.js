@@ -1,75 +1,120 @@
 import PouchDB from 'pouchdb';
 import path from 'path-browserify';
+import pouchdbFind from 'pouchdb-find';
+import eventBus from './eventBus'; 
+
+PouchDB.plugin(pouchdbFind);
 
 const dbPath = path.join('databases', 'jobs_db');
-var jobs_db = new PouchDB(dbPath);
 
-const jobsDbAPI = {
-    getDb() {
-        return jobs_db;
-    },
+const indexes = [
+    'applyAt',
+    'yearsOfExpRequired',
+    'Remote'
+]; 
 
+const sortValues = [
+    'salaryEqMin',
+]; 
+
+var jobs_db;
+
+async function getDb() {
+    if (!jobs_db) {
+        jobs_db = await newDb();
+    }
+    return jobs_db;
+}
+
+async function newDb() {
+    const db = new PouchDB(dbPath);
+    await ensureSortedIndexes(db);
+
+    return db;
+}
+
+async function ensureSortedIndexes(jobs_db) {
+    for (let val of sortValues) {
+        for (let property of indexes) {
+            try {
+                await jobs_db.createIndex({
+                    index: {
+                        fields: [property, val],
+                        ddoc: `${property}-${val}`
+                    }
+                });
+            } catch (err) {
+                console.error(`Error creating index on ${property}:`, err);
+            }
+        }
+    }
+}
+
+class JobsDbAPI {
     async addJob(job) {
+        const db = await getDb();
         try {
-            // Check if the job already exists in the database.
             let existingJob;
             try {
-                existingJob = await jobs_db.get(job._id);
+                existingJob = await db.get(job._id);
             } catch (err) {
                 if (err.name !== 'not_found') {
-                    // There was some other error, so throw it.
                     throw err;
                 }
             }
             
             if (existingJob) {
-                // The job already exists, so don't add it again.
                 console.warn(`Job with id ${job._id} already exists.`);
                 return;
             }
-    
-            // Add the new job to the database.
-            const response = await jobs_db.put(job);
+
+            const response = await db.put(job);
+            eventBus.dbChange.publish(response); 
             return response;
         } catch (err) {
             console.error(err);
         }
-    },
+    }
 
     async bulkAdd(jobs) {
+        const db = await getDb();
         try {
-            // Extract ids from jobs.
             const ids = jobs.map(job => job._id);
-    
-            // Fetch existing jobs from database.
-            const existingJobs = await jobs_db.allDocs({ keys: ids });
-    
-            // Build a set of existing job ids.
+            const existingJobs = await db.allDocs({ keys: ids });
             const existingIds = new Set(existingJobs.rows.map(row => row.id));
-    
-            // Filter out jobs that already exist in the database.
             const newJobs = jobs.filter(job => !existingIds.has(job._id));
-    
-            // Add new jobs to the database.
-            const response = await jobs_db.bulkDocs(newJobs);
+            const response = await db.bulkDocs(newJobs);
+            eventBus.dbChange.publish(response); 
             return response;
         } catch (err) {
             console.error(err);
         }
-    },
+    }
 
     async getJob(id) {
+        const db = await getDb();
         try {
-            const doc = await jobs_db.get(id);
+            const doc = await db.get(id);
             return doc;
         } catch (err) {
             console.error(err);
         }
-    },
+    }
+
+    async hasJob(id) {
+        const db = await getDb();
+        try {
+            await db.get(id);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    }
 
     async bulkGet(ids) {
+        const db = await getDb();
         try {
-            const docs = await jobs_db.allDocs({ 
+            const docs = await db.allDocs({ 
                 keys: ids,
                 include_docs: true
             });
@@ -77,65 +122,71 @@ const jobsDbAPI = {
         } catch (err) {
             console.error(err);
         }
-    },
+    }
 
     async deleteJob(id) {
+        const db = await getDb();
         try {
             const doc = await this.getJob(id);
-            const response = await jobs_db.remove(doc);
+            const response = await db.remove(doc);
+            eventBus.dbChange.publish(response);
             return response;
         } catch (err) {
             console.error(err);
         }
-    },
+    }
 
     async bulkDelete(ids) {
+        const db = await getDb();
         try {
             const docs = await this.bulkGet(ids);
             const docsToDelete = docs.map(doc => ({ ...doc, _deleted: true }));
-            const response = await jobs_db.bulkDocs(docsToDelete);
+            const response = await db.bulkDocs(docsToDelete);
+            eventBus.dbChange.publish(response); 
             return response;
         } catch (err) {
             console.error(err);
         }
-    },
+    }
 
     async updateJob(id, job) {
+        const db = await getDb();
         try {
             const doc = await this.getJob(id);
-            const response = await jobs_db.put({ ...doc, ...job });
+            const response = await db.put({ ...doc, ...job });
+            eventBus.dbChange.publish(response);
             return response;
         } catch (err) {
             console.error(err);
         }
-    },
+    }
 
     async bulkUpdate(jobs) {
+        const db = await getDb();
         try {
-            const response = await jobs_db.bulkDocs(jobs);
+            const response = await db.bulkDocs(jobs);
+            eventBus.dbChange.publish(response);
             return response;
         } catch (err) {
             console.error(err);
         }
-    },
+    }
 
     async getAllJobs() {
+        const db = await getDb();
         try {
-            return await jobs_db.allDocs({ include_docs: true });
+            return await db.allDocs({ include_docs: true });
         } catch (err) {
             console.error(err);
         }
-    },
+    }
 
     async clearDb() {
+        const oldDb = await getDb();
         try {
-            const response = await jobs_db.destroy();
-            jobs_db = new PouchDB(dbPath); // Reinitialize the database
-    
-            // Emit a custom event indicating that the DB has been cleared
-            const event = new CustomEvent('dbCleared', { detail: jobs_db });
-            window.dispatchEvent(event);
-    
+            const response = await oldDb.destroy();
+            jobs_db = newDb();
+            eventBus.dbChange.publish(response);
             return response;
         } catch (err) {
             console.error(err);
@@ -143,4 +194,5 @@ const jobsDbAPI = {
     }    
 };
 
+const jobsDbAPI = new JobsDbAPI();
 export default jobsDbAPI;

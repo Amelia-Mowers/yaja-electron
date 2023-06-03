@@ -1,5 +1,9 @@
+Cancel script from progress popup?
+
 Filter sheet view
 Database indexing and paging
+
+make progress modal generic
 
 Integrate node scripts 
 
@@ -12,15 +16,11 @@ form assist
 
 cover letter upload
 
-Cancel script from progress popup?
-
 Electron Custom warnings, unpaired listeners and handlers
 
 prompt to complete config, use multiple schemas?
 
 Export Database
-
-Refactor table to use event bus
 
 check if applied based on login, 
 track applications for offsite

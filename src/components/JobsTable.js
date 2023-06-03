@@ -19,7 +19,7 @@ function JobsTable() {
     const fetchData = async () => {
       try {
         const allDocs = await jobsDbAPI.getAllJobs();
-        // console.log('All Docs:', allDocs);
+
         setJobs(allDocs.rows.map(row => row.doc));
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -28,44 +28,12 @@ function JobsTable() {
 
     fetchData();
 
-    let changes;
-    
-    const updateChanges = () => {
-      // Dispose of the existing changes listener
-      if (changes) {
-        changes.cancel();
-      }
-  
-      // Create a new changes listener
-      changes = jobsDbAPI.getDb().changes({
-        since: 'now',
-        live: true,
-        include_docs: true
-      }).on('change', (change) => {
-        // Update the state when the database changes
-        fetchData();
-      }).on('error', (err) => {
-        console.error('Error listening for changes:', err);
-      });
-
+    const dbChangeUnsubscribe = eventBus.dbChange.subscribe(() => {
       fetchData();
-    };
+    });
 
-    // Initialize the changes listener
-    updateChanges();
-
-    // Listen for the dbCleared event and update the changes listener when it happens
-    const onDbCleared = (event) => {
-      updateChanges();
-    };
-    window.addEventListener('dbCleared', onDbCleared);
-
-    // Clean up the event listener when the component is unmounted
     return () => {
-      if (changes) {
-        changes.cancel();
-      }
-      window.removeEventListener('dbCleared', onDbCleared);
+      dbChangeUnsubscribe();
     };
   }, []);
 
