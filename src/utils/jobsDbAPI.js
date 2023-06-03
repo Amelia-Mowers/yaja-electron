@@ -175,7 +175,10 @@ class JobsDbAPI {
     async getAllJobs() {
         const db = await getDb();
         try {
-            return await db.allDocs({ include_docs: true });
+            return await db.allDocs({ 
+                include_docs: true,
+                startkey: '_design0' 
+            });
         } catch (err) {
             console.error(err);
         }
