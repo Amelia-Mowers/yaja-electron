@@ -89,16 +89,18 @@ async function scrapeIndeedJobPage(searchQuery, location, pageNum, page) {
                 const value = parseFloat(num.replace(/,/g, ''));
                 return num.includes('K') ? value * 1000 : value;
             });
+
+            const numbersFloor = Math.floor(numbers);
             
             const isHourly = salaryRaw.includes('hour');
             if (isHourly) {
-                numbers[0] *= 40 * 52;
-                numbers[1] *= 40 * 52;
+                numbersFloor[0] *= 40 * 52;
+                numbersFloor[1] *= 40 * 52;
             }
             return {
                 salaryRaw,
-                salaryEqMin: numbers[0],
-                salaryEqMax: numbers[1]
+                salaryEqMin: numbersFloor[0],
+                salaryEqMax: numbersFloor[1]
             };
         }
 
