@@ -8,9 +8,9 @@ PouchDB.plugin(pouchdbFind);
 const dbPath = path.join('databases', 'jobs_db');
 
 const indexes = [
-    'applyAt',
-    'yearsOfExpRequired',
-    'Remote'
+    {name: 'applyAt', values: ['External', 'Internal']},
+    {name: 'yearsOfExpRequired', values: Array.from({length: 10}, (v, k) => k+1)},
+    {name: 'Remote', values: [true, false]}
 ]; 
 
 const sortValues = [
@@ -39,8 +39,8 @@ async function ensureSortedIndexes(jobs_db) {
             try {
                 await jobs_db.createIndex({
                     index: {
-                        fields: [property, val],
-                        ddoc: `${property}-${val}`
+                        fields: [property.name, val],
+                        ddoc: `${property.name}-${val}`
                     }
                 });
             } catch (err) {
@@ -194,7 +194,11 @@ class JobsDbAPI {
         } catch (err) {
             console.error(err);
         }
-    }    
+    }
+
+    getIndexes() {
+        return indexes;
+    }      
 };
 
 const jobsDbAPI = new JobsDbAPI();
