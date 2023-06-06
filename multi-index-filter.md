@@ -47,6 +47,11 @@ Value can be thought of as Sort Value concatenated with id, since every id is di
 
 saves time because a jump on the next crawler could create another highest value, so might as well use that for further jumps going forward
 
+crawler iteration can go consistently between smallest index list to highest index list.
+or prioritize sparsest 
+or least common between indexes?
+
+Or indexes of highest current value to lowest value?
 
 Total max computation time complexity is N_r * (X * Log(N_mit))
 
@@ -69,3 +74,19 @@ if a single object is removed from the database, it could be seen if it's in the
 likewise if a range is removed.
 
 though if the object or objects being removed have a range outside the range of the filtered output of the sorted value, it does not need to be considered to be removed, because it is not in the set
+
+
+
+// For other fields, you must create an index first.
+// This query sorts all documents by name.
+db.createIndex({
+  index: {fields: ['series']}
+}).then(function () {
+  return db.find({
+    selector: {
+      series: {$eq: "Mario"},
+      _id: {$gte: "mario"},
+      debut: {$gte: 1983}
+    }
+  });
+});
