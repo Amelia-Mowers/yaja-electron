@@ -186,10 +186,12 @@ class JobsDbAPI {
     async getAllJobs() {
         const db = await getDb();
         try {
-            return await db.allDocs({ 
+            const response = await db.allDocs({ 
                 include_docs: true,
                 startkey: '_design0' 
             });
+            // map the rows to extract job documents
+            return response.rows ? response.rows.map(row => row.doc) : [];
         } catch (err) {
             console.error(err);
         }
@@ -207,12 +209,14 @@ class JobsDbAPI {
 
         const db = await getDb();
         try {
-            return await db.find({
+            const response = await db.find({
                 selector: {
                     [sortProperty]: {$gte: null}
                 },
                 sort: [{[sortProperty]: direction}]
-              });
+            });
+            // If response has 'docs' property, use that as the fetchedJobs
+            return response.docs || [];
         } catch (err) {
             console.error(err);
         }

@@ -37,13 +37,9 @@ function JobsTable() {
       try {
         let fetchedJobs;
         if (sortProperty) {
-          const response = await jobsDbAPI.getSortedJobs(sortProperty, sortDirection);
-          // If response has 'docs' property, use that as the fetchedJobs
-          fetchedJobs = response.docs || [];
+          fetchedJobs = await jobsDbAPI.getSortedJobs(sortProperty, sortDirection);
         } else {
-          const response = await jobsDbAPI.getAllJobs();
-          // If response has 'rows' property, map it to extract job documents
-          fetchedJobs = response.rows ? response.rows.map(row => row.doc) : [];
+          fetchedJobs = await jobsDbAPI.getAllJobs();
         }
   
         setJobs(fetchedJobs);
