@@ -13,8 +13,9 @@ const indexes = [
     {name: 'Remote', values: [true, false]}
 ]; 
 
-const sortValues = [
+const sortProperties = [
     'salaryEqMin',
+    'timeOfJobScraping'
 ]; 
 
 var jobs_db;
@@ -34,7 +35,17 @@ async function newDb() {
 }
 
 async function ensureSortedIndexes(jobs_db) {
-    for (let val of sortValues) {
+    for (let val of sortProperties) {
+        try {
+            await jobs_db.createIndex({
+                index: {
+                    fields: [val],
+                    ddoc: `${val}`
+                }
+            });
+        } catch (err) {
+            console.error(`Error creating index on ${val}:`, err);
+        }
         for (let property of indexes) {
             try {
                 await jobs_db.createIndex({
@@ -184,6 +195,47 @@ class JobsDbAPI {
         }
     }
 
+    async getSortedJobs(sortProperty, dir = true) {
+        if (!sortProperties.includes(sortProperty)) {
+            throw new Error(`${sortProperty} is not a defined sort property`);
+        }
+
+        var direction;
+
+        if (dir) { direction = 'asc' }
+        else { direction = 'desc' }
+
+        const db = await getDb();
+        try {
+            return await db.find({
+                selector: {
+                    [sortProperty]: {$gte: null}
+                },
+                sort: [{[sortProperty]: direction}]
+              });
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async getFilteredJobs(sortProperty, filters, dir = true) {
+        // TODO
+    }
+
+    async getJobs({
+        sortProperty,
+        filters,
+        dir = true,
+    }) {
+        if (!sortProperty) {
+            return this.getAllJobs()
+        } else if (sortProperty && !filters) {
+            this.getSortedJobs(sortProperty, dir)
+        } else if (sortProperty && filters) {
+            this.getFilteredJobs(sortProperty, filters, dir)
+        } 
+    }
+
     async clearDb() {
         const oldDb = await getDb();
         try {
@@ -198,7 +250,11 @@ class JobsDbAPI {
 
     getIndexes() {
         return indexes;
-    }      
+    }    
+
+    getSortProperties() {
+        return sortProperties;
+    }        
 };
 
 const jobsDbAPI = new JobsDbAPI();

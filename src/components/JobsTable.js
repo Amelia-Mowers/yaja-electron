@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ButtonGroup, Dropdown, Button, DropdownButton } from 'react-bootstrap';
 import jobsDbAPI from '../utils/jobsDbAPI';
 import eventBus from '../utils/eventBus';
 
@@ -14,28 +15,61 @@ const columnDefs = [
 
 function JobsTable() {
   const [jobs, setJobs] = useState([]);
+  const [sortProperty, setSortProperty] = useState(null);
+  const [sortDirection, setSortDirection] = useState(false);
+  const [sortProperties, setSortProperties] = useState([]);
+
+  useEffect(() => {
+    const fetchSortProperties = async () => {
+      try {
+        const fetchedSortProperties = await jobsDbAPI.getSortProperties();
+        setSortProperties(fetchedSortProperties);
+      } catch (error) {
+        console.error('Error fetching sort properties:', error);
+      }
+    };
+
+    fetchSortProperties();
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const allDocs = await jobsDbAPI.getAllJobs();
-
-        setJobs(allDocs.rows.map(row => row.doc));
+        let fetchedJobs;
+        if (sortProperty) {
+          const response = await jobsDbAPI.getSortedJobs(sortProperty, sortDirection);
+          // If response has 'docs' property, use that as the fetchedJobs
+          fetchedJobs = response.docs || [];
+        } else {
+          const response = await jobsDbAPI.getAllJobs();
+          // If response has 'rows' property, map it to extract job documents
+          fetchedJobs = response.rows ? response.rows.map(row => row.doc) : [];
+        }
+  
+        setJobs(fetchedJobs);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
-
+  
     fetchData();
-
+  
     const dbChangeUnsubscribe = eventBus.dbChange.subscribe(() => {
       fetchData();
     });
-
+  
     return () => {
       dbChangeUnsubscribe();
     };
-  }, []);
+  }, [sortProperty, sortDirection]);
+
+  const handleSortChange = (selectedSort) => {
+    setSortProperty(selectedSort === 'none' ? null : selectedSort);
+  };
+
+  const toggleSortDirection = () => {
+    setSortDirection(!sortDirection);
+  };
 
   const onJobRowClick = (job) => {
     eventBus.jobSelected.publish(job._id);
@@ -59,20 +93,36 @@ function JobsTable() {
         ))}
       </tr>
     ));
-      
   };
 
   return (
-    <table>
-      <thead>
-        <tr>
-          {columnDefs.map((col, index) => (
-            <th key={index}>{col.header}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>{renderTableData()}</tbody>
-    </table>
+    <>
+      <div className="toolbar">
+        <ButtonGroup>
+          <DropdownButton as={ButtonGroup} variant='outline-secondary' title= {sortProperty || "None"} onSelect={handleSortChange}>
+            <Dropdown.Item eventKey="none">None</Dropdown.Item>
+            {sortProperties.map((sortProperty, index) => (
+              <Dropdown.Item key={index} eventKey={sortProperty}>{sortProperty}</Dropdown.Item>
+            ))}
+          </DropdownButton >
+          <Button variant="outline-secondary" onClick={toggleSortDirection} disabled={!sortProperty}>
+            {sortDirection ? '▲' : '▼'}
+          </Button>
+        </ButtonGroup>
+      </div>
+      <div className="table">
+        <table>
+          <thead>
+            <tr>
+              {columnDefs.map((col, index) => (
+                <th key={index}>{col.header}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>{renderTableData()}</tbody>
+        </table>
+      </div>
+    </>
   );
 }
 

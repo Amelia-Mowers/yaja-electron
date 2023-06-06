@@ -6,7 +6,7 @@
     "header"
     "main";
   grid-template-rows: min-content auto;
-  gap: 5px;
+  gap: 10px;
   padding: 10px;
   height: 100vh;
   overflow: auto;
@@ -16,7 +16,7 @@
   display: grid;
   width: min-content;
   grid-auto-flow: column;
-  gap: 5px;
+  gap: 10px;
 }
 
 .header .btn {
@@ -28,14 +28,26 @@
   display: grid;
   grid-template-areas: "table-div detail-div";
   grid-template-columns: 1fr min-content; /* Adjust to your need */
-  gap: 1rem;
+  gap: 10px;
   overflow: auto;
 }
 
 .table-div {
   grid-area: table-div;
+  display: grid;
   width: max(min-content);
+  grid-template-rows: min-content 1fr;
   overflow: auto;
+  gap: 10px;
+}
+
+.table {
+  display: grid;
+  overflow: auto;
+}
+
+.toolbar {
+  gap: 10px;
 }
 
 .detail-div {

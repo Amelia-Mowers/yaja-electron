@@ -52,7 +52,7 @@ const JobDetails = () => {
                 display: showDetails ? 'grid' : 'none', 
                 overflow: 'auto',
                 gridTemplateRows: 'min-content 1fr',
-                gap: '5px'
+                gap: '10px'
             }}
         >
             <div>
