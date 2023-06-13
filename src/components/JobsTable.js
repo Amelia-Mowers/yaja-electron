@@ -18,6 +18,8 @@ function JobsTable() {
   const [sortProperty, setSortProperty] = useState(null);
   const [sortDirection, setSortDirection] = useState(false);
   const [sortProperties, setSortProperties] = useState([]);
+  const [filters, setFilters] = useState({});
+  const [filterProperties, setFilterProperties] = useState([]);
 
   useEffect(() => {
     const fetchSortProperties = async () => {
@@ -33,14 +35,27 @@ function JobsTable() {
   }, []);
 
   useEffect(() => {
+    const fetchFilterProperties = async () => {
+      try {
+        const fetchedFilterProperties = await jobsDbAPI.getFilterProperties();
+        setFilterProperties(fetchedFilterProperties);
+      } catch (error) {
+        console.error('Error fetching filter properties:', error);
+      }
+    };
+
+    fetchFilterProperties();
+  }, []);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
-        let fetchedJobs;
-        if (sortProperty) {
-          fetchedJobs = await jobsDbAPI.getSortedJobs(sortProperty, sortDirection);
-        } else {
-          fetchedJobs = await jobsDbAPI.getAllJobs();
-        }
+        const fetchedJobs = await jobsDbAPI.getJobs({
+          sortProperty,
+          filters: Object.keys(filters).map(key => ({ property: key, val: filters[key] })),
+          amount: 10,
+          dir: sortDirection,
+        });
   
         setJobs(fetchedJobs);
       } catch (error) {
@@ -57,7 +72,11 @@ function JobsTable() {
     return () => {
       dbChangeUnsubscribe();
     };
-  }, [sortProperty, sortDirection]);
+  }, [sortProperty, sortDirection, filters]);
+
+  const handleFilterChange = (selectedFilterVal, filterProperty) => {
+    setFilters(prev => ({...prev, [filterProperty]: selectedFilterVal === 'none' ? null : selectedFilterVal}));
+  };
 
   const handleSortChange = (selectedSort) => {
     setSortProperty(selectedSort === 'none' ? null : selectedSort);
@@ -105,6 +124,17 @@ function JobsTable() {
             {sortDirection ? '▲' : '▼'}
           </Button>
         </ButtonGroup>
+
+        {filterProperties.map((filterProperty, index) => (
+          <ButtonGroup key={index}>
+            <DropdownButton as={ButtonGroup} variant='outline-secondary' title= {filters[filterProperty.name] || "None"} onSelect={(selectedFilterVal) => handleFilterChange(selectedFilterVal, filterProperty.name)}>
+              <Dropdown.Item eventKey="none">None</Dropdown.Item>
+              {filterProperty.values.map((filterVal, index) => (
+                <Dropdown.Item key={index} eventKey={filterVal}>{filterVal.toString()}</Dropdown.Item>
+              ))}
+            </DropdownButton >
+          </ButtonGroup>
+        ))}
       </div>
       <div className="table">
         <table>
