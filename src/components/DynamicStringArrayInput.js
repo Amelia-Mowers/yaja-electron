@@ -34,7 +34,7 @@ const DynamicStringArrayInput = ({ name, onChange, value }) => {
         if (typeof onChange === 'function' && inputs !== prevInputs) {
             onChange(name, inputs.filter(input => input !== ''));
         }
-    }, [inputs, name, onChange]);
+    }, [inputs, name, onChange, prevInputs]);
 
     return (
         <>
