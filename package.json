@@ -10,6 +10,7 @@
     "bootstrap": "^5.2.3",
     "electron-is-dev": "^2.0.0",
     "html-react-parser": "^3.0.16",
+    "lodash": "^4.17.21",
     "path": "^0.12.7",
     "path-browserify": "^1.0.1",
     "pouchdb": "^8.0.1",
@@ -26,10 +27,10 @@
   },
   "main": "electron.js",
   "scripts": {
-    "start": "concurrently \"npm:react-start\" \"npm:electron-start\"",
+    "start": "concurrently \"npm run react-start\" \"wait-on tcp:127.0.0.1:3000 && npm run electron-start\"",
     "react-start": "cross-env BROWSER=none react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "jest",
     "eject": "react-scripts eject",
     "electron-start": "node_modules\\.bin\\electron ."
   },
@@ -52,10 +53,23 @@
     ]
   },
   "devDependencies": {
+    "@kayahr/jest-electron-runner": "^29.5.0",
     "concurrently": "^8.0.1",
     "cross-env": "^7.0.3",
     "electron": "^24.2.0",
+    "start-server-and-test": "^2.0.0",
     "wait-on": "^7.0.1"
   },
-  "build": "react-scripts build --source-map"
+  "build": "react-scripts build --source-map",
+  "jest": {
+    "transform": {
+      "^.+\\.(js|jsx)$": "babel-jest",
+      "^.+\\.(css|scss)$": "<rootDir>/jest.setup.js"
+    },
+    "moduleNameMapper": {
+      "\\.(css|less|scss|sss|styl)$": "<rootDir>/node_modules/jest-css-modules"
+    },
+    "runner": "@kayahr/jest-electron-runner/main",
+    "testEnvironment": "node"
+  }
 }
